@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Ana Makeup Artist</title>
+  <title>Consulta de Certificados</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 { text-align: center; color: #2c3e50; margin-top: 0; }
+    p.subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 25px; }
+    label { font-weight: 600; color: #34495e; display: block; margin-bottom: 8px; }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      outline: none;
+    }
+    input[type="text"]:focus { border-color: #3498db; }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background-color: #2980b9; }
+    .resultado-box {
+      margin-top: 25px;
+      display: none;
+    }
+    .item-certificado {
+      background-color: #f8f9fa;
+      border-left: 4px solid #2ecc71;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    .item-certificado p { margin: 5px 0; color: #333; }
+    .btn-download {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      background-color: #2ecc71;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .btn-download:hover { background-color: #27ae60; }
+    .error-msg { color: #e74c3c; text-align: center; font-weight: 500; }
+    .loading { text-align: center; color: #7f8c8d; }
+  </style>
+</head>
+<body>
 
+<div class="card">
+  <h2>Ana Makeup Artist</h2>
+  <h2>Portal de Certificados</h2>
+  <p class="subtitle">Consulta y descarga tus certificados de participación</p>
+  
+  <label for="cedula">Cédula / Documento de Identidad:</label>
+  <input type="text" id="cedula" placeholder="Ej: 001-0000000-0" onkeypress="if(event.key==='Enter') buscarCertificado()">
+  <button onclick="buscarCertificado()">Consultar</button>
+
+  <div id="resultado" class="resultado-box"></div>
+</div>
+
+<script>
+  //Api Generada por Appscript
+  const API_URL = "https://script.google.com/macros/s/AKfycbwQFVj0iZVXZMhbcSzOQKQ3_WYAXpQdVk7KPq6xiMDUb3S82EyBJdxYZ6zjr11NhnjK/exec";
+
+  async function buscarCertificado() {
+    const cedulaInput = document.getElementById('cedula').value.trim();
+    const divResultado = document.getElementById('resultado');
+
+    if (!cedulaInput) {
+      alert("Por favor ingresa un número de cédula.");
+      return;
+    }
+
+    divResultado.style.display = "block";
+    divResultado.innerHTML = '<p class="loading">Cargando información...</p>';
+
+    try {
+      const response = await fetch(`${API_URL}?cedula=${encodeURIComponent(cedulaInput)}`);
+      const data = await response.json();
+
+      if (data.encontrado && data.certificados.length > 0) {
+        let html = '';
+        data.certificados.forEach(cert => {
+          html += `
+            <div class="item-certificado">
+              <p><strong>Participante:</strong> ${cert.nombre}</p>
+              <p><strong>Evento/Curso:</strong> ${cert.curso}</p>
+              <p><strong>Fecha:</strong> ${cert.fecha}</p>
+              <a href="${cert.url_certificado}" target="_blank" class="btn-download">Ver / Descargar Certificado</a>
+            </div>
+          `;
+        });
+        divResultado.innerHTML = html;
+      } else {
+        divResultado.innerHTML = '<p class="error-msg">No se encontraron certificados para el documento ingresado.</p>';
+      }
+    } catch (error) {
+      console.error(error);
+      divResultado.innerHTML = '<p class="error-msg">Ocurrió un error al consultar. Intenta más tarde.</p>';
+    }
+  }
+</script>
+
+</body>
+</html>
