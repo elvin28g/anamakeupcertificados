@@ -50,7 +50,7 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    button:hover { background-color: #DCDCDC; }
+    button:hover { background-color: #dcdcdc; }
     .resultado-box {
       margin-top: 25px;
       display: none;
@@ -87,7 +87,7 @@
   <p class="subtitle">Consulta y descarga tus certificados de participación</p>
   
   <label for="cedula">Cédula / Documento de Identidad:</label>
-  <input type="text" id="cedula" placeholder="Ej: 001-0000000-0" onkeypress="if(event.key==='Enter') buscarCertificado()">
+  <input type="text" id="cedula" placeholder="Ej: 00100000000" onkeypress="if(event.key==='Enter') buscarCertificado()">
   <button onclick="buscarCertificado()">Consultar</button>
 
   <div id="resultado" class="resultado-box"></div>
